@@ -1,0 +1,23 @@
+{
+  "dataStudio": {
+    "name": "Spirit",
+    "company": "Spirit App LLC",
+    "companyUrl": "https://spiritapp.co",
+    "logoUrl": "NEED URL",
+    "addonUrl": "NEED URL",
+    "supportUrl": "https://support.spiritapp.co/",
+    "description": "NEED DESCRIPTION",
+    "shortDescription": "NEED DESCRIPTION",
+    "privacyPolicyUrl" : "https://www.spiritapp.co/legal/privacy",
+    "termsOfServiceUrl" : "https://www.spiritapp.co/legal/terms",
+    "authType": ["OAUTH2"],
+    "feeType": ["FREE"],
+    "sources": ["NEED SOURCE"],
+    "templates": {
+      "default": "NEED ID"
+    }
+  },
+  "urlFetchWhitelist": [
+    "https://api.spiritapp.co/"
+  ]
+}
