@@ -2,58 +2,126 @@ function getConfig(request) {
   var config = {
     configParams: [
       {
-        type: "INFO",
-        name: "connect",
-        text: "This connector does not require any configuration. Click CONNECT at the top right to get started."
+        type: "SELECT_SINGLE",
+        name: "type",
+        displayName: "Rankings Type",
+        helpText: "Would you like to see team or individual rankings?",
+        parameterControl: {
+          allowOverride: true
+        },
+        options: [
+          {
+            label: "Individual",
+            value: "individual"
+          },
+          {
+            label: "Team",
+            value: "team"
+          }
+        ]
       }
     ]
   };
   return config;
 };
 
-var rankingsDataSchema = [
+var individualRankingsDataSchema = [
   {
     name: 'user_full_name',
-    label: 'Name',
+    label: 'Person Name',
+    description: "The name of the person",
     dataType: 'STRING',
     semantics: {
-      conceptType: 'DIMENSION'
+      conceptType: 'DIMENSION',
+      semanticType: "TEXT",
+      isReaggregatable: false
     }
   },
   {
     name: 'position',
     label: 'Position',
+    description: "The rank of the person on the Spirit leaderboard",
     dataType: 'NUMBER',
     semantics: {
-      conceptType: 'DIMENSION'
+      conceptType: 'METRIC',
+      isReaggregatable: false
     }
   },
   {
     name: 'points',
     label: 'Points',
+    description: "How many Spirit points the person has",
+    isDefault: true,
     dataType: 'NUMBER',
     semantics: {
-      conceptType: 'METRIC'
+      conceptType: 'METRIC',
+      isReaggregatable: true
+    }
+  }
+];
+
+var teamRankingsDataSchema = [
+  {
+    name: 'team_name',
+    label: 'Team Name',
+    description: "The name of the team",
+    dataType: 'STRING',
+    semantics: {
+      conceptType: 'DIMENSION',
+      semanticType: "TEXT",
+      isReaggregatable: false
+    }
+  },
+  {
+    name: 'position',
+    label: 'Position',
+    description: "The rank of the team on the Spirit leaderboard",
+    dataType: 'NUMBER',
+    semantics: {
+      conceptType: 'METRIC',
+      isReaggregatable: false
+    }
+  },
+  {
+    name: 'points',
+    label: 'Points',
+    description: "How many Spirit points the team has",
+    isDefault: true,
+    dataType: 'NUMBER',
+    semantics: {
+      conceptType: 'METRIC',
+      isReaggregatable: true
     }
   }
 ];
 
 function getSchema(request) {
-  return {schema: rankingDataSchema};
+  switch(request.configParams.type){
+    case 'individual':
+      return {schema: individualRankingsDataSchema};
+      break;
+    case 'team':
+      return {schema: teamRankingsDataSchema};
+      break;
+    default:
+      console.error("Unknown type");
+      break;
+  }
 };
 
 function getData(request) {
   var dataSchema = [];
+  var currentSchema = getSchema(request).schema;
   request.fields.forEach(function(field) {
-    for (var i = 0; i < rankingsDataSchema.length; i++) {
-      if (rankingsDataSchema[i].name === field.name) {
-        dataSchema.push(rankingsDataSchema[i]);
+    for (var i = 0; i < currentSchema.length; i++) {
+      if (currentSchema[i].name === field.name) {
+        dataSchema.push(currentSchema[i]);
         break;
       }
     }
   });
 
-  var response = JSON.parse(UrlFetchApp.fetch("https://api.spiritapp.co/v2/rankings/individual", {
+  var response = JSON.parse(UrlFetchApp.fetch("https://api.spiritapp.co/v2/rankings/" + request.configParams.type, {
     headers: {
       Authorization: 'Bearer ' + getOAuthService().getAccessToken()
     }
@@ -72,6 +140,9 @@ function getData(request) {
           break;
         case 'position':
           values.push(ranking.position);
+          break;
+        case 'team_name':
+          values.push(ranking.team_name);
           break;
         default:
           values.push('');
@@ -105,15 +176,15 @@ function getOAuthService() {
     .setTokenUrl('https://api.spiritapp.co/oauth/token')
     .setClientId(scriptProps.getProperty('OAUTH_CLIENT_ID'))
     .setClientSecret(scriptProps.getProperty('OAUTH_CLIENT_SECRET'))
-    .setScope("VIEW_RANKINGS")
+    .setScope("rankings.view")
     .setPropertyStore(PropertiesService.getUserProperties())
     .setCallbackFunction('authCallback');
 }
 
 function authCallback(request) {
   return getOAuthService().handleCallback(request)
-    ? HtmlService.createHtmlOutput('Success! You can close this tab.')
-    : HtmlService.createHtmlOutput('Denied. You can close this tab');
+    ? HtmlService.createHtmlOutputFromFile('close.html')
+    : HtmlService.createHtmlOutputFromFile('denied.html')
 }
 
 function isAuthValid() {
@@ -127,4 +198,8 @@ function resetAuth() {
 
 function get3PAuthorizationUrls() {
   return getOAuthService().getAuthorizationUrl();
+}
+
+function isAdminUser(){
+  return false;
 }
