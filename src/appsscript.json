@@ -1,20 +1,29 @@
-{
+{ "timeZone": "America/New_York",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "OAuth2",
+        "libraryId": "1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF",
+        "version": "24"
+      }
+    ]
+  },
   "dataStudio": {
-    "name": "Spirit",
+    "name": "Spirit Rankings",
     "company": "Spirit App LLC",
     "companyUrl": "https://spiritapp.co",
-    "logoUrl": "NEED URL",
+    "logoUrl": "https://static.spiritapp.co/logos/spirit/icon/circle/48.png",
     "addonUrl": "NEED URL",
-    "supportUrl": "https://support.spiritapp.co/",
-    "description": "NEED DESCRIPTION",
-    "shortDescription": "NEED DESCRIPTION",
+    "supportUrl": "https://support.spiritapp.co/hc/en-us/requests/new",
+    "description": "Spirit is an app for everything outside of the classroom. Spirit boosts communication, increases participation, and makes event management easy. We put student life at your fingertips. If you need an account, go to our website to get started.",
+    "shortDescription": "Connect to your Spirit rankings data. Spirit is a radical new approach to student life.",
     "privacyPolicyUrl" : "https://www.spiritapp.co/legal/privacy",
     "termsOfServiceUrl" : "https://www.spiritapp.co/legal/terms",
     "authType": ["OAUTH2"],
     "feeType": ["FREE"],
-    "sources": ["NEED SOURCE"],
+    "sources": ["SPIRIT_RANKINGS"],
     "templates": {
-      "default": "NEED ID"
+      "default": "1KByKkU7uAitEvsEqpQUyfdayhZZiYhhG"
     }
   },
   "urlFetchWhitelist": [
